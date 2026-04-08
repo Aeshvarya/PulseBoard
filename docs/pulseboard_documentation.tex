@@ -1,6 +1,6 @@
 % ============================================================
 %  PulseBoard – Full Technical Documentation
-%  Compile with: pdflatex -> biber -> pdflatex x2
+%  Compile with: pdflatex -> pdflatex x2
 %  Requires packages listed in the preamble.
 % ============================================================
 
@@ -20,7 +20,7 @@
 
 % ── Colour ──────────────────────────────────────────────────
 \usepackage[dvipsnames,svgnames,table]{xcolor}
-\definecolor{accent}{HTML}{CCF900}       % PulseBoard volt yellow
+\definecolor{accent}{HTML}{CCF900}
 \definecolor{darkbg}{HTML}{050505}
 \definecolor{codebg}{HTML}{1E1E2E}
 \definecolor{codefg}{HTML}{CDD6F4}
@@ -34,13 +34,56 @@
 \definecolor{tableheadbg}{HTML}{1E293B}
 \definecolor{rowodd}{HTML}{F1F5F9}
 \definecolor{roweven}{HTML}{FFFFFF}
+\definecolor{flowblue}{HTML}{3B82F6}
+\definecolor{flowgreen}{HTML}{10B981}
+\definecolor{floworange}{HTML}{F59E0B}
+\definecolor{flowred}{HTML}{EF4444}
+\definecolor{flowpurple}{HTML}{8B5CF6}
 
 % ── Graphics & Floats ───────────────────────────────────────
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{wrapfig}
 \usepackage{tikz}
-\usetikzlibrary{shapes.geometric,arrows.meta,positioning,fit,backgrounds,shadows}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,fit,
+                 backgrounds,shadows,matrix,calc,trees,chains}
+
+% ── TikZ Common Styles ──────────────────────────────────────
+\tikzset{
+  proc/.style={rectangle, rounded corners=4pt, draw=#1!70, fill=#1!10,
+               text width=4.8cm, align=center, font=\small,
+               minimum height=0.85cm, inner sep=4pt},
+  procS/.style={rectangle, rounded corners=4pt, draw=#1!70, fill=#1!10,
+               text width=3.2cm, align=center, font=\small,
+               minimum height=0.8cm, inner sep=3pt},
+  dec/.style={diamond, draw=floworange!80, fill=floworange!12,
+              align=center, font=\small, aspect=2.2, inner sep=2pt},
+  term/.style={rectangle, rounded corners=18pt, draw=accent!80!black,
+               fill=accent!25, align=center, font=\small\bfseries,
+               minimum width=2.8cm, minimum height=0.7cm},
+  arr/.style={-{Stealth[scale=1.1]}, thick, #1},
+  ehead/.style={rectangle, draw=tableheadbg, fill=tableheadbg, text=white,
+                minimum width=7.5cm, align=center, font=\small\bfseries,
+                inner sep=5pt, minimum height=0.75cm},
+  eodd/.style={rectangle, draw=type!25, fill=rowodd,
+               minimum width=7.5cm, align=left, font=\small\ttfamily,
+               inner sep=4pt, minimum height=0.6cm},
+  eeven/.style={rectangle, draw=type!25, fill=roweven,
+                minimum width=7.5cm, align=left, font=\small\ttfamily,
+                inner sep=4pt, minimum height=0.6cm},
+  actor/.style={rectangle, rounded corners=3pt, draw=tableheadbg,
+                fill=tableheadbg, text=white, font=\small\bfseries,
+                minimum width=2.4cm, minimum height=0.65cm, align=center},
+  smsg/.style={-{Stealth}, thick, darkbg},
+  sret/.style={-{Stealth}, thick, dashed, type},
+  sll/.style={dashed, gray!40, line width=0.4pt},
+  tnode/.style={rectangle, rounded corners=3pt, draw=type!60, fill=type!10,
+                font=\footnotesize, align=center, minimum height=0.55cm,
+                minimum width=2.2cm, inner sep=3pt},
+  troot/.style={rectangle, rounded corners=4pt, draw=accent!80!black,
+                fill=accent!25, font=\small\bfseries, align=center,
+                minimum height=0.65cm, minimum width=3cm},
+}
 
 % ── Tables ──────────────────────────────────────────────────
 \usepackage{booktabs}
@@ -49,71 +92,6 @@
 \usepackage{multirow}
 \usepackage{array}
 \usepackage{colortbl}
-
-% ── Code Listings (Prism-style) ─────────────────────────────
-\usepackage{listings}
-\usepackage{lstautogobble}
-
-\lstdefinestyle{prism}{
-  backgroundcolor  = \color{codebg},
-  basicstyle       = \ttfamily\footnotesize\color{codefg},
-  keywordstyle     = \color{keyword}\bfseries,
-  stringstyle      = \color{string},
-  commentstyle     = \color{comment}\itshape,
-  numberstyle      = \tiny\color{comment},
-  identifierstyle  = \color{codefg},
-  emphstyle        = \color{type}\bfseries,
-  emphstyle        = [2]\color{func},
-  numbers          = left,
-  numbersep        = 10pt,
-  stepnumber       = 1,
-  showstringspaces = false,
-  breaklines       = true,
-  breakatwhitespace= true,
-  tabsize          = 2,
-  frame            = single,
-  framerule        = 0pt,
-  rulecolor        = \color{codebg},
-  xleftmargin      = 18pt,
-  xrightmargin     = 4pt,
-  framexleftmargin = 18pt,
-  autogobble       = true,
-  columns          = fullflexible,
-  keepspaces       = true,
-}
-
-% TypeScript language definition
-\lstdefinelanguage{TypeScript}{
-  keywords  = {
-    const, let, var, function, return, if, else, for, while, do,
-    switch, case, break, continue, new, delete, typeof, instanceof,
-    in, of, import, export, default, from, class, extends, implements,
-    interface, type, enum, namespace, declare, abstract, async, await,
-    try, catch, finally, throw, void, null, undefined, true, false,
-    this, super, static, readonly, public, private, protected,
-    module, require, Promise, any
-  },
-  sensitive  = true,
-  morecomment= [l]{//},
-  morecomment= [s]{/*}{*/},
-  morestring = [b]",
-  morestring = [b]',
-  morestring = [b]`,
-}
-
-% JSON language definition
-\lstdefinelanguage{JSON}{
-  basicstyle       = \ttfamily\footnotesize\color{codefg},
-  keywords         = {true, false, null},
-  keywordstyle     = \color{number}\bfseries,
-  morestring       = [b]",
-  stringstyle      = \color{string},
-  sensitive        = false,
-  morecomment      = [l]{//},
-  commentstyle     = \color{comment},
-}
-
-\lstset{style=prism}
 
 % ── Hyperlinks ──────────────────────────────────────────────
 \usepackage[
@@ -141,7 +119,7 @@
 \usepackage{enumitem}
 \usepackage{mdframed}
 \usepackage{tcolorbox}
-\tcbuselibrary{skins,breakable,listingsutf8}
+\tcbuselibrary{skins,breakable}
 \usepackage{fontawesome5}
 \usepackage{titlesec}
 \usepackage{tocloft}
@@ -219,7 +197,7 @@
 \begin{tikzpicture}
   \node[rectangle, fill=accent, minimum width=14cm, minimum height=1.4cm,
         rounded corners=4pt] (banner) {};
-  \node[font=\Huge\bfseries\itshape, text=darkbg, skew=-0.2] at (banner)
+  \node[font=\Huge\bfseries\itshape, text=darkbg] at (banner)
     {PULSEBOARD};
 \end{tikzpicture}
 
@@ -313,37 +291,52 @@ Animations       & Moti + React Native Reanimated          & 0.30 / 4.1 \\
 
 \section{Repository Structure}
 
-\begin{lstlisting}[language=bash, caption={Repository Directory Structure}]
-PulseBoard/
-├── pulseboard_backend/          # Node.js Express API server
-│   ├── src/
-│   │   ├── server.ts            # Application entry point
-│   │   ├── controllers/         # Request handlers (11 files)
-│   │   ├── routes/              # API route definitions (11 files)
-│   │   ├── models/              # MongoDB schemas (7 files)
-│   │   ├── services/            # Business logic layer (9 files)
-│   │   ├── jobs/                # Scheduled background tasks
-│   │   ├── middlewares/         # Express middleware
-│   │   └── utils/               # Shared utilities
-│   └── package.json
-│
-└── pulseboard_mobile/           # React Native Expo application
-    ├── app/                     # Expo Router navigation tree
-    │   ├── index.tsx            # Welcome / splash screen
-    │   ├── auth/                # Login, Register, OTP, Reset
-    │   ├── tabs/                # Main tab bar screens
-    │   ├── club_tabs/           # Club admin portal screens
-    │   ├── calendar.tsx         # Calendar view
-    │   ├── heatmap.tsx          # LHC room heatmap
-    │   ├── sos.tsx              # Emergency contacts
-    │   └── settings.tsx         # App settings
-    ├── src/
-    │   ├── api/                 # Axios API client layer
-    │   ├── services/            # Client-side services
-    │   ├── context/             # React context providers
-    │   └── components/          # Reusable UI components
-    └── package.json
-\end{lstlisting}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  folder/.style={rectangle, rounded corners=3pt, draw=flowblue!60, fill=flowblue!10,
+                 font=\small\bfseries, align=center, minimum height=0.6cm,
+                 minimum width=3.0cm, inner sep=3pt},
+  file/.style={rectangle, draw=gray!40, fill=gray!6,
+               font=\footnotesize\ttfamily, align=left, minimum height=0.5cm,
+               minimum width=3.0cm, inner sep=3pt},
+  root/.style={rectangle, rounded corners=4pt, draw=accent!80!black, fill=accent!20,
+               font=\small\bfseries, align=center, minimum height=0.7cm,
+               minimum width=3.5cm},
+  arr/.style={-{Stealth[scale=0.8]}, gray!60},
+]
+
+% Root
+\node[root] (root) at (0,0) {PulseBoard/};
+
+% Backend column
+\node[folder, below left=0.8cm and 2.8cm of root] (be) {pulseboard\_backend/};
+\node[file,   below=0.15cm of be] (be1) {src/server.ts};
+\node[file,   below=0.05cm of be1] (be2) {src/controllers/  (11)};
+\node[file,   below=0.05cm of be2] (be3) {src/routes/  (11)};
+\node[file,   below=0.05cm of be3] (be4) {src/models/  (7)};
+\node[file,   below=0.05cm of be4] (be5) {src/services/  (9)};
+\node[file,   below=0.05cm of be5] (be6) {src/jobs/  cron};
+\node[file,   below=0.05cm of be6] (be7) {src/middlewares/};
+\node[file,   below=0.05cm of be7] (be8) {package.json};
+
+% Mobile column
+\node[folder, below right=0.8cm and 2.8cm of root] (mo) {pulseboard\_mobile/};
+\node[file,   below=0.15cm of mo] (mo1) {app/\_layout.tsx};
+\node[file,   below=0.05cm of mo1] (mo2) {app/index.tsx};
+\node[file,   below=0.05cm of mo2] (mo3) {app/auth/  (login, register\ldots)};
+\node[file,   below=0.05cm of mo3] (mo4) {app/tabs/  (5 screens)};
+\node[file,   below=0.05cm of mo4] (mo5) {app/club\_tabs/  (admin)};
+\node[file,   below=0.05cm of mo5] (mo6) {src/api/  client + helpers};
+\node[file,   below=0.05cm of mo6] (mo7) {src/context/  ThemeContext};
+\node[file,   below=0.05cm of mo7] (mo8) {package.json};
+
+\draw[arr] (root.south) -- ++(0,-0.25) -| (be.north);
+\draw[arr] (root.south) -- ++(0,-0.25) -| (mo.north);
+
+\end{tikzpicture}
+\caption{Repository Directory Structure}
+\end{figure}
 
 % ─────────────────────────────────────────────────────────────
 \chapter{Backend Architecture}
@@ -353,43 +346,28 @@ PulseBoard/
 
 The backend is a \textbf{TypeScript Express server} that connects to MongoDB on startup and immediately launches three independent background services.
 
-\begin{lstlisting}[language=TypeScript, caption={server.ts — Startup Sequence}]
-import express from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
-import mongoose from 'mongoose';
-import { startGmailWatcher } from './services/gmailWatcher.service';
-import { startReminderScheduler } from './services/reminderScheduler.service';
-import { initCronJobs } from './jobs/cron';
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.55cm]
+  \node[term]                             (start) {npm run dev};
+  \node[proc=flowblue, below=of start]    (mw)    {Register Middleware\\(cors, morgan, json)};
+  \node[proc=flowblue, below=of mw]       (routes){Mount API Routes\\(10 route groups under /api)};
+  \node[proc=flowgreen, below=of routes]  (mongo) {mongoose.connect()\\MongoDB Atlas};
+  \node[proc=flowpurple, below=of mongo]  (cron)  {initCronJobs()\\Daily cleanup at 00:00};
+  \node[proc=floworange, below=of cron]   (gw)    {startGmailWatcher()\\Poll every 5 minutes};
+  \node[proc=floworange, below=of gw]     (rs)    {startReminderScheduler()\\Check every 5 minutes};
+  \node[term, below=of rs]                (listen){app.listen(8082)\\Server ready};
 
-const app = express();
-
-// ── Middleware ───────────────────────────────────────────────
-app.use(morgan('dev'));
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// ── Routes registered under /api ────────────────────────────
-app.use('/api/auth',            authRoutes);
-app.use('/api/users',           userRoutes);
-app.use('/api/clubs',           clubRoutes);
-app.use('/api/events',          eventRoutes);
-app.use('/api/personal-events', personalEventRoutes);
-app.use('/api/email',           emailRoutes);
-app.use('/api/calendar',        calendarRoutes);
-app.use('/api/lhc',             lhcRoutes);
-app.use('/api/categories',      categoryRoutes);
-app.use('/api/mails',           mailRoutes);
-
-// ── Database + Background Services ──────────────────────────
-mongoose.connect(process.env.MONGO_URI!).then(() => {
-  initCronJobs();                         // Daily cleanup at 00:00
-  startGmailWatcher(300_000);             // Poll Gmail every 5 min
-  startReminderScheduler(300_000);        // Check reminders every 5 min
-  app.listen(process.env.PORT || 5000);
-});
-\end{lstlisting}
+  \draw[arr=darkbg] (start)  -- (mw);
+  \draw[arr=darkbg] (mw)     -- (routes);
+  \draw[arr=darkbg] (routes) -- (mongo);
+  \draw[arr=darkbg] (mongo)  -- (cron);
+  \draw[arr=darkbg] (cron)   -- (gw);
+  \draw[arr=darkbg] (gw)     -- (rs);
+  \draw[arr=darkbg] (rs)     -- (listen);
+\end{tikzpicture}
+\caption{server.ts — Startup Sequence}
+\end{figure}
 
 \section{API Endpoints Reference}
 
@@ -484,13 +462,13 @@ The \textbf{Smart Inbox} gives users full control over their event feed:
 \rowcolor{tableheadbg}
 \color{white}\normalfont Method & \color{white}\normalfont Route & \color{white}\normalfont Description \\
 \toprule
-POST & /api/email/inbound          & Mailgun webhook — receives club emails          \\
-GET  & /api/calendar/events        & Calendar events (filterable by category \& date) \\
-GET  & /api/lhc/heatmap            & LHC room bookings for a given date              \\
+POST  & /api/email/inbound          & Mailgun webhook — receives club emails          \\
+GET   & /api/calendar/events        & Calendar events (filterable by category \& date) \\
+GET   & /api/lhc/heatmap            & LHC room bookings for a given date              \\
 GET   & /api/users/me               & Authenticated user profile                      \\
 PATCH & /api/users/me               & Update display name. Body: \texttt{\{name\}}    \\
 POST  & /api/users/save-push-token  & Register Expo push token                        \\
-GET  & /api/categories             & All event categories                            \\
+GET   & /api/categories             & All event categories                            \\
 \bottomrule
 \end{tabularx}
 \caption{Remaining API Endpoints}
@@ -502,28 +480,28 @@ GET  & /api/categories             & All event categories                       
 
 \section{User Model}
 
-\begin{lstlisting}[language=TypeScript, caption={User.model.ts — Schema Definition}]
-interface IUser {
-  name:               string;       // Required
-  email:              string;       // Required, unique, lowercase, trimmed
-  provider:           'local' | 'google';   // Required
-  googleId?:          string;       // Unique if provider='google'
-  password?:          string;       // bcrypt hashed, required if local
-  isVerified:         boolean;      // Default: false
-  otp?:               string;       // 6-digit email verification OTP
-  otpExpiry?:         Date;         // 10-minute window
-  resetOtp?:          string;       // bcrypt-hashed password reset OTP
-  resetOtpExpires?:   Date;         // 15-minute window
-  expoPushToken?:     string;       // For push notifications
-  year?:              number;       // Academic year
-  branch?:            string;       // Engineering branch
-  following:          number[];     // Array of followed clubIds (default [])
-  avatar?:            string;       // Custom URL or Gravatar
-  googleAccessToken?: string;       // Short-lived (1h), auto-refreshed
-  googleRefreshToken?:string;       // Long-lived, used to renew access token
-  mutedCategories:    string[];     // Categories hidden from Smart Inbox (default [])
-}
-\end{lstlisting}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+  \node[ehead]                        (h)  {User};
+  \node[eodd,  below=0pt of h]        (f1) {name:String · required};
+  \node[eeven, below=0pt of f1]       (f2) {email:String · unique · indexed};
+  \node[eodd,  below=0pt of f2]       (f3) {provider:'local' | 'google'};
+  \node[eeven, below=0pt of f3]       (f4) {googleId?:String · unique};
+  \node[eodd,  below=0pt of f4]       (f5) {password?:String · bcrypt hashed};
+  \node[eeven, below=0pt of f5]       (f6) {isVerified:Boolean · default: false};
+  \node[eodd,  below=0pt of f6]       (f7) {otp? / otpExpiry?:6-digit OTP · 10-min TTL};
+  \node[eeven, below=0pt of f7]       (f8) {resetOtp? / resetOtpExpires?:15-min TTL};
+  \node[eodd,  below=0pt of f8]       (f9) {expoPushToken?:Expo push token};
+  \node[eeven, below=0pt of f9]       (fa) {year? / branch?:Academic info};
+  \node[eodd,  below=0pt of fa]       (fb) {following:Number[] · clubIds followed};
+  \node[eeven, below=0pt of fb]       (fc) {avatar?:String · Gravatar or custom URL};
+  \node[eodd,  below=0pt of fc]       (fd) {googleAccessToken?:Short-lived · 1h};
+  \node[eeven, below=0pt of fd]       (fe) {googleRefreshToken?:Long-lived · Gmail API};
+  \node[eodd,  below=0pt of fe]       (ff) {mutedCategories:String[] · default []};
+\end{tikzpicture}
+\caption{User Model — Schema Fields}
+\end{figure}
 
 \begin{infobox}{Security Notes}
 Passwords are hashed with \code{bcryptjs} at 10 salt rounds before storage. \code{googleAccessToken} and \code{googleRefreshToken} are stored in plaintext — in a production environment these should be encrypted at rest using AES-256.
@@ -531,118 +509,107 @@ Passwords are hashed with \code{bcryptjs} at 10 salt rounds before storage. \cod
 
 \section{Club Model}
 
-\begin{lstlisting}[language=TypeScript, caption={Club.model.ts — Schema Definition}]
-interface IClub {
-  clubId:      number;   // Required, unique, indexed
-  name:        string;   // Required, unique
-  description: string;   // Required
-  category:    'Technical' | 'Cultural' | 'Literary' | 'Other';
-  followers:   number;   // Default 0, incremented on follow
-  image?:      string;   // Cloudinary image URL
-  email?:      string;   // Linked email for Mailgun inbound webhook
-}
-\end{lstlisting}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+  \node[ehead]                   (h)  {Club};
+  \node[eodd,  below=0pt of h]   (f1) {clubId:Number · unique · indexed};
+  \node[eeven, below=0pt of f1]  (f2) {name:String · required · unique};
+  \node[eodd,  below=0pt of f2]  (f3) {description:String · required};
+  \node[eeven, below=0pt of f3]  (f4) {category:'Technical' | 'Cultural' | 'Literary' | 'Other'};
+  \node[eodd,  below=0pt of f4]  (f5) {followers:Number · default 0};
+  \node[eeven, below=0pt of f5]  (f6) {image?:String · Cloudinary CDN URL};
+  \node[eodd,  below=0pt of f6]  (f7) {email?:String · Mailgun inbound webhook};
+\end{tikzpicture}
+\caption{Club Model — Schema Fields}
+\end{figure}
 
 \section{Event Model (Global Club Feed)}
 
-\begin{lstlisting}[language=TypeScript, caption={Event.model.ts — Schema Definition}]
-interface IEvent {
-  imageUrl?:    string;             // Cloudinary CDN URL
-  clubId:       number;             // Required, indexed (NOT unique)
-  title:        string;             // Required
-  description?: string;
-  icon:         string;             // Emoji (default '📅')
-  badge:        'LIVE' | 'UPCOMING'; // Indexed, default 'UPCOMING'
-  date:         Date;               // Required, indexed — time embedded
-  endDate?:     Date;               // Indexed
-  timeDisplay:  string;             // Human-readable: "6:00 PM – 8:00 PM"
-  location:     string;             // Required
-  color?:       string;             // Hex e.g. '#CCF900'
-}
-// Lifecycle: deleted by cron job 1 day after event.date
-\end{lstlisting}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+  \node[ehead]                   (h)  {Event};
+  \node[eodd,  below=0pt of h]   (f1) {clubId:Number · required · indexed};
+  \node[eeven, below=0pt of f1]  (f2) {title:String · required};
+  \node[eodd,  below=0pt of f2]  (f3) {description?:String};
+  \node[eeven, below=0pt of f3]  (f4) {icon:String · emoji · default '📅'};
+  \node[eodd,  below=0pt of f4]  (f5) {badge:'LIVE' | 'UPCOMING' · indexed};
+  \node[eeven, below=0pt of f5]  (f6) {date:Date · required · indexed · time-embedded};
+  \node[eodd,  below=0pt of f6]  (f7) {endDate?:Date · indexed};
+  \node[eeven, below=0pt of f7]  (f8) {timeDisplay:String · e.g. "6:00 PM – 8:00 PM"};
+  \node[eodd,  below=0pt of f8]  (f9) {location:String · required};
+  \node[eeven, below=0pt of f9]  (fa) {imageUrl?:String · Cloudinary CDN URL};
+  \node[eodd,  below=0pt of fa]  (fb) {color?:String · hex e.g. '\#CCF900'};
+\end{tikzpicture}
+\caption{Event Model — Schema Fields. Lifecycle: deleted by cron 1 day after \texttt{event.date}.}
+\end{figure}
 
 \section{PersonalEvent Model (Per-User Smart Inbox)}
 
-\begin{lstlisting}[language=TypeScript, caption={PersonalEvent.model.ts — Schema Definition}]
-interface IPersonalEvent {
-  userId:        ObjectId;          // Ref: User, indexed
-  gmailMessageId:string;            // Gmail-assigned message ID
-  title:         string;            // Required
-  description?:  string;
-  icon:          string;            // Emoji
-  badge:         'LIVE' | 'UPCOMING';
-  date:          Date;              // Required — time-embedded ISO date
-  endDate?:      Date;              // Indexed
-  timeDisplay:   string;            // Human-readable time string
-  location:      string;            // Required
-  color?:        string;            // Hex color
-  sourceFrom:    string;            // Original email sender
-  sourceSubject: string;            // Original email subject
-  reminderSent?: boolean;           // Has 1-hour reminder been sent?
-  category:      EventCategory;     // See enum below
-}
-
-type EventCategory =
-  | 'clubs'
-  | 'interviews'
-  | 'mess'
-  | 'google_classroom'
-  | 'lost_found'
-  | 'academic'
-  | 'general';
-
-// Indexes:
-//   Unique compound: { userId: 1, gmailMessageId: 1 }
-//   Performance:     { date: 1, reminderSent: 1 }
-// Lifecycle: deleted by cron 28 days after creation
-\end{lstlisting}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+  \node[ehead]                   (h)  {PersonalEvent};
+  \node[eodd,  below=0pt of h]   (f1) {userId:ObjectId · ref: User · indexed};
+  \node[eeven, below=0pt of f1]  (f2) {gmailMessageId:String · Gmail/manual ID};
+  \node[eodd,  below=0pt of f2]  (f3) {title:String · required};
+  \node[eeven, below=0pt of f3]  (f4) {description?:String};
+  \node[eodd,  below=0pt of f4]  (f5) {icon:String · emoji};
+  \node[eeven, below=0pt of f5]  (f6) {badge:'LIVE' | 'UPCOMING'};
+  \node[eodd,  below=0pt of f6]  (f7) {date:Date · required · time-embedded ISO};
+  \node[eeven, below=0pt of f7]  (f8) {endDate?:Date · indexed};
+  \node[eodd,  below=0pt of f8]  (f9) {timeDisplay:String · human-readable};
+  \node[eeven, below=0pt of f9]  (fa) {location:String · required};
+  \node[eodd,  below=0pt of fa]  (fb) {color?:String · hex color};
+  \node[eeven, below=0pt of fb]  (fc) {sourceFrom:String · email sender};
+  \node[eodd,  below=0pt of fc]  (fd) {sourceSubject:String · email subject};
+  \node[eeven, below=0pt of fd]  (fe) {reminderSent?:Boolean · 1-hour reminder flag};
+  \node[eodd,  below=0pt of fe]  (ff) {category:clubs | interviews | mess | classroom | lost\_found | academic | general | personal};
+\end{tikzpicture}
+\caption{PersonalEvent Model. Compound unique index: \texttt{\{userId, gmailMessageId\}}. Lifecycle: deleted 28 days after creation.}
+\end{figure}
 
 \section{ProcessedEmail Model (AI Parse Cache)}
 
-\begin{lstlisting}[language=TypeScript, caption={ProcessedEmail.model.ts — Deduplication Cache}]
-interface IProcessedEmail {
-  emailMessageId:   string;     // RFC 2822 Message-ID header — unique, indexed
-  isEvent:          boolean;    // Groq AI decision (cached)
-  eventTitle?:      string;
-  eventDescription?:string;
-  eventDate?:       Date;       // Time-embedded ISO date
-  eventEndDate?:    Date;
-  eventTimeDisplay?:string;
-  eventLocation?:   string;
-  eventBadge?:      'LIVE' | 'UPCOMING';
-  eventIcon?:       string;
-  eventColor?:      string;
-  eventCategory?:   string;
-  processedByUsers: ObjectId[]; // Users who have already received this event
-}
-// Lifecycle: deleted by cron 7 days after creation
-// Purpose: same email sent to N users = 1 AI call, N-1 cache hits
-\end{lstlisting}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+  \node[ehead]                   (h)  {ProcessedEmail};
+  \node[eodd,  below=0pt of h]   (f1) {emailMessageId:String · RFC 2822 ID · unique};
+  \node[eeven, below=0pt of f1]  (f2) {isEvent:Boolean · Groq AI decision (cached)};
+  \node[eodd,  below=0pt of f2]  (f3) {eventTitle? / eventDescription?:Extracted fields};
+  \node[eeven, below=0pt of f3]  (f4) {eventDate? / eventEndDate?:Time-embedded ISO dates};
+  \node[eodd,  below=0pt of f4]  (f5) {eventTimeDisplay?:Human-readable time};
+  \node[eeven, below=0pt of f5]  (f6) {eventLocation? / eventBadge?:Extracted fields};
+  \node[eodd,  below=0pt of f6]  (f7) {eventIcon? / eventColor? / eventCategory?:Styling};
+  \node[eeven, below=0pt of f7]  (f8) {processedByUsers:ObjectId[] · \$addToSet};
+\end{tikzpicture}
+\caption{ProcessedEmail — Deduplication cache. Same email to N users = 1 AI call + N-1 cache hits. Lifecycle: deleted 7 days after creation.}
+\end{figure}
 
 \section{Mail \& Category Models}
 
-\begin{lstlisting}[language=TypeScript, caption={Mail.model.ts and Category.model.ts}]
-// ── Mail Model ───────────────────────────────────────────────
-interface IMail {
-  categoryId: number;               // Indexed
-  sender:     string;               // Required
-  subject:    string;               // Required
-  body:       string;               // Required
-  isRead:     boolean;              // Default false
-  priority:   'low' | 'medium' | 'high';
-}
-// Unique index: { sender, subject, body } — prevents duplicates
-// TTL: documents auto-deleted after 604800 seconds (7 days)
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+  % Mail
+  \node[ehead, minimum width=5.8cm]                   (mh) {Mail};
+  \node[eodd,  minimum width=5.8cm, below=0pt of mh]  (m1) {categoryId:Number · indexed};
+  \node[eeven, minimum width=5.8cm, below=0pt of m1]  (m2) {sender / subject / body:required};
+  \node[eodd,  minimum width=5.8cm, below=0pt of m2]  (m3) {isRead:Boolean · default false};
+  \node[eeven, minimum width=5.8cm, below=0pt of m3]  (m4) {priority:'low' | 'medium' | 'high'};
+  \node[eodd,  minimum width=5.8cm, below=0pt of m4]  (m5) {TTL: 7 days auto-delete};
 
-// ── Category Model ───────────────────────────────────────────
-interface ICategory {
-  categoryId: number;   // Unique, indexed
-  name:       string;   // Unique
-  icon:       string;   // Lucide icon name
-  color:      string;   // Hex color code
-}
-\end{lstlisting}
+  % Category (to the right)
+  \node[ehead, minimum width=5.8cm, right=1cm of mh]                   (ch) {Category};
+  \node[eodd,  minimum width=5.8cm, below=0pt of ch]  (c1) {categoryId:Number · unique · indexed};
+  \node[eeven, minimum width=5.8cm, below=0pt of c1]  (c2) {name:String · unique};
+  \node[eodd,  minimum width=5.8cm, below=0pt of c2]  (c3) {icon:String · Lucide icon name};
+  \node[eeven, minimum width=5.8cm, below=0pt of c3]  (c4) {color:String · hex color code};
+\end{tikzpicture}
+\caption{Mail and Category Models}
+\end{figure}
 
 % ─────────────────────────────────────────────────────────────
 \chapter{Core Services}
@@ -652,137 +619,81 @@ interface ICategory {
 
 The Gmail Watcher is the \textbf{central engine} of PulseBoard. It runs as a \code{setInterval} loop every 5 minutes, scanning every registered Google user's Gmail inbox for campus-relevant emails.
 
-\begin{lstlisting}[language=TypeScript, caption={gmailWatcher.service.ts — Core Logic}]
-export function startGmailWatcher(intervalMs = 300_000) {
-  checkAllUsers();                        // Run immediately on boot
-  setInterval(checkAllUsers, intervalMs); // Then every 5 minutes
-}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.5cm]
+  \node[term]                              (boot)  {App Boot};
+  \node[proc=flowblue, below=of boot]      (users) {Find users with\\googleAccessToken + expoPushToken};
+  \node[proc=flowblue, below=of users]     (batch) {Process in batches of 10\\(avoid Gmail rate limits)};
+  \node[proc=flowblue, below=of batch]     (fetch) {Gmail API: fetch 50\\unread emails (30 days)};
+  \node[proc=flowblue, below=of fetch]     (msgid) {Extract RFC 2822\\Message-ID header};
+  \node[dec,           below=of msgid]     (cache) {In ProcessedEmail\\cache?};
+  \node[proc=floworange, below=of cache]   (miss)  {Cache MISS:\\call Groq API};
+  \node[proc=floworange, below=of miss]    (store) {Store result in\\ProcessedEmail cache};
+  \node[dec,           below=of store]     (isev)  {isEvent\\= true?};
+  \node[proc=flowpurple, below=of isev]    (ups)   {PersonalEvent.upsert()\\for this user};
+  \node[proc=flowpurple, below=of ups]     (club)  {If club account:\\Event.create() globally};
+  \node[proc=floworange, below=of club]    (push)  {If interviews:\\send push notification};
+  \node[proc=flowblue,   below=of push]    (mark)  {\$addToSet: processedByUsers};
+  \node[term,            below=of mark]    (wait)  {Wait 5 min · repeat};
 
-async function checkAllUsers() {
-  // Only scan users who have the app installed (expoPushToken set)
-  const users = await User.find({
-    googleAccessToken: { $exists: true },
-    expoPushToken:     { $exists: true }
-  });
+  % Main vertical flow
+  \draw[arr=darkbg] (boot)--(users);
+  \draw[arr=darkbg] (users)--(batch);
+  \draw[arr=darkbg] (batch)--(fetch);
+  \draw[arr=darkbg] (fetch)--(msgid);
+  \draw[arr=darkbg] (msgid)--(cache);
+  \draw[arr=darkbg] (cache)  -- node[right,font=\tiny]{NO (MISS)} (miss);
+  \draw[arr=darkbg] (miss)  -- (store);
+  \draw[arr=darkbg] (store) -- (isev);
+  \draw[arr=darkbg] (isev)  -- node[right,font=\tiny]{YES} (ups);
+  \draw[arr=darkbg] (ups)   -- (club);
+  \draw[arr=darkbg] (club)  -- (push);
+  \draw[arr=darkbg] (push)  -- (mark);
+  \draw[arr=darkbg] (mark)  -- (wait);
 
-  // Process in batches of 10 to avoid Gmail rate limits
-  for (let i = 0; i < users.length; i += 10) {
-    const batch = users.slice(i, i + 10);
-    await Promise.allSettled(batch.map(u => checkUserEmails(u)));
-  }
-}
+  % Cache HIT: bypass miss+store, go straight to isev
+  \draw[arr=darkbg] (cache.east) -- ++(3.2,0)
+      node[midway,above,font=\tiny]{YES (HIT)}
+      -- ++(0,-3.0) -| (isev.east);
 
-async function checkUserEmails(user: IUser) {
-  // 1. Fetch last 50 unread emails from past 30 days
-  const messages = await gmailRequest(user, '/messages?q=is:unread newer_than:30d&maxResults=50');
-
-  for (const msg of messages) {
-    // 2. Extract RFC 2822 Message-ID header (globally unique per email)
-    const messageId = extractHeader(msg.payload.headers, 'Message-ID');
-
-    // 3. Check deduplication cache
-    const cached = await ProcessedEmail.findOne({ emailMessageId: messageId });
-
-    let parsed;
-    if (cached && !cached.processedByUsers.includes(user._id)) {
-      // Cache HIT — reuse AI result from another user's processing
-      parsed = cached;
-    } else if (!cached) {
-      // Cache MISS — call Groq AI (one API call for all recipients)
-      const subject = extractHeader(msg.payload.headers, 'Subject');
-      const body    = extractBody(msg.payload);
-      parsed = await parseEventFromEmail(subject, body);
-      await ProcessedEmail.create({ emailMessageId: messageId, ...parsed });
-    }
-
-    if (parsed?.isEvent) {
-      // 4. Create PersonalEvent for this user
-      await PersonalEvent.findOneAndUpdate(
-        { userId: user._id, gmailMessageId: msg.id },
-        { ...parsed, userId: user._id },
-        { upsert: true }
-      );
-
-      // 5. If this user is a club account, publish to global Event feed
-      const linkedClub = await Club.findOne({ email: user.email });
-      if (linkedClub) {
-        await Event.create({ clubId: linkedClub.clubId, ...parsed });
-      }
-
-      // 6. Send push notification for interview opportunities
-      if (parsed.eventCategory === 'interviews' && user.expoPushToken) {
-        await sendPushNotification(user.expoPushToken,
-          '💼 Interview Opportunity', parsed.eventTitle);
-      }
-    }
-
-    // Mark this user as processed for this message
-    await ProcessedEmail.findOneAndUpdate(
-      { emailMessageId: messageId },
-      { $addToSet: { processedByUsers: user._id } }
-    );
-  }
-}
-
-// Auto-refresh expired access tokens (1h expiry)
-async function gmailRequest(user: IUser, path: string) {
-  const res = await axios.get(`https://gmail.googleapis.com/gmail/v1/users/me${path}`, {
-    headers: { Authorization: `Bearer ${user.googleAccessToken}` }
-  });
-  if (res.status === 401 && user.googleRefreshToken) {
-    const client = new OAuth2Client(...);
-    client.setCredentials({ refresh_token: user.googleRefreshToken });
-    const { credentials } = await client.refreshAccessToken();
-    user.googleAccessToken = credentials.access_token!;
-    await user.save();
-    // Retry with new token...
-  }
-  return res.data;
-}
-\end{lstlisting}
+  % isEvent=NO: skip to mark
+  \draw[arr=darkbg] (isev.west) -- ++(-3.2,0)
+      node[midway,above,font=\tiny]{NO}
+      -- ++(0,-3.6) -| (mark.west);
+\end{tikzpicture}
+\caption{Gmail Watcher Service — Core Processing Loop}
+\end{figure}
 
 \section{Email Parser Service}
 
 The Email Parser sends email content to \textbf{Groq's Llama 3.1 8B Instant} model with a carefully engineered prompt that instructs the AI to classify, extract, and structure campus event information.
 
-\begin{lstlisting}[language=TypeScript, caption={emailParser.service.ts — AI Parsing Logic}]
-export async function parseEventFromEmail(
-  subject: string,
-  body: string
-): Promise<ParsedEvent | null> {
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.55cm]
+  \node[term]                              (in)    {Input: subject + body};
+  \node[proc=flowblue, below=of in]        (build) {Build structured prompt\\(rules + JSON schema)};
+  \node[proc=floworange, below=of build]   (groq)  {POST to Groq API\\llama-3.1-8b-instant};
+  \node[dec, below=of groq]               (ok)    {Response\\OK?};
+  \node[proc=flowred, right=2cm of ok]    (fb)    {Fallback:\\smartRegexParse()};
+  \node[proc=flowblue, below=of ok]        (parse) {JSON.parse()\\response content};
+  \node[dec, below=of parse]              (isev)  {isEvent\\= true?};
+  \node[proc=flowred, right=2cm of isev]  (null)  {Return null\\(skip email)};
+  \node[proc=flowgreen, below=of isev]    (ret)   {Return ParsedEvent\\\{title, date, location,\\timeDisplay, category,\\icon, color, badge\}};
 
-  const response = await axios.post(
-    'https://api.groq.com/openai/v1/chat/completions',
-    {
-      model: 'llama-3.1-8b-instant',
-      messages: [{
-        role: 'user',
-        content: buildPrompt(subject, body)
-      }],
-      response_format: { type: 'json_object' }
-    },
-    { headers: { Authorization: `Bearer ${process.env.GROQ_API_KEY}` } }
-  );
-
-  const result = JSON.parse(response.data.choices[0].message.content);
-
-  if (!result.isEvent) return null;
-
-  return {
-    isEvent:      true,
-    title:        result.title,
-    description:  result.description,
-    date:         new Date(result.date),    // Time EMBEDDED in ISO string
-    endDate:      result.endDate ? new Date(result.endDate) : undefined,
-    timeDisplay:  result.timeDisplay,       // "5:00 PM – 7:00 PM"
-    location:     result.location || 'TBD',
-    badge:        result.badge,             // 'LIVE' | 'UPCOMING'
-    icon:         result.icon,              // Emoji
-    color:        result.color,             // Hex color
-    category:     validateCategory(result.category),
-  };
-}
-\end{lstlisting}
+  \draw[arr=darkbg] (in)--(build);
+  \draw[arr=darkbg] (build)--(groq);
+  \draw[arr=darkbg] (groq)--(ok);
+  \draw[arr=darkbg] (ok)  -- node[above,font=\tiny]{FAIL} (fb);
+  \draw[arr=darkbg] (ok)  -- node[right,font=\tiny]{OK} (parse);
+  \draw[arr=darkbg] (parse)--(isev);
+  \draw[arr=darkbg] (isev) -- node[above,font=\tiny]{NO} (null);
+  \draw[arr=darkbg] (isev) -- node[right,font=\tiny]{YES} (ret);
+  \draw[arr=darkbg] (fb.south) |- (isev.east);
+\end{tikzpicture}
+\caption{Email Parser Service — AI Parsing Flow}
+\end{figure}
 
 \subsection{AI Prompt Design}
 
@@ -827,6 +738,7 @@ general        & \texttt{📢} & \texttt{\#6B7280} & Other campus-relevant email
 mess           & \texttt{🍽}  & \texttt{\#10B981} & Mess menu, canteen notices   \\
 google\_classroom & \texttt{📋} & \texttt{\#4285F4} & Classroom assignments        \\
 lost\_found    & \texttt{🔍} & \texttt{\#8B5CF6} & Lost \& found notices        \\
+personal       & \texttt{👤} & \texttt{\#CCF900} & Manually created events      \\
 \bottomrule
 \end{tabularx}
 \caption{Event Category Mappings}
@@ -834,172 +746,133 @@ lost\_found    & \texttt{🔍} & \texttt{\#8B5CF6} & Lost \& found notices      
 
 \subsection{Fallback Parser}
 
-If the Groq API is unavailable, \code{smartRegexParse()} activates as a fallback:
+If the Groq API is unavailable (429 / timeout), \code{smartRegexParse()} activates:
 
-\begin{lstlisting}[language=TypeScript, caption={Regex-based fallback parser}]
-function smartRegexParse(subject: string, body: string): ParsedEvent | null {
-  const fullText = `${subject} ${body}`.toLowerCase();
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.55cm]
+  \node[term]                               (in)   {Input: subject + body};
+  \node[proc=flowblue, below=of in]         (low)  {Lowercase full text};
+  \node[dec, below=of low]                  (spam) {Contains spam\\keyword?};
+  \node[proc=flowred, right=2.5cm of spam]  (no)   {Return null};
+  \node[dec, below=of spam]                 (evt)  {Contains event\\keyword?};
+  \node[proc=flowred, right=2.5cm of evt]   (no2)  {Return null};
+  \node[proc=flowblue, below=of evt]        (time) {Regex: extract\\time (HH:MM AM/PM)};
+  \node[proc=flowblue, below=of time]       (date) {Regex: extract date\\(DD/MM/YYYY or Mon DD)};
+  \node[proc=flowgreen, below=of date]      (ret)  {buildEventFromRegex()\\return ParsedEvent};
 
-  // Spam keyword blocklist check
-  const spamKeywords = ['otp', '% off', 'myntra', 'flipkart', 'order confirmed'];
-  if (spamKeywords.some(k => fullText.includes(k))) return null;
-
-  // Event keyword validation (must have at least one)
-  const eventKeywords = ['event', 'fest', 'workshop', 'hackathon', 'seminar',
-                         'interview', 'exam', 'deadline', 'tournament'];
-  const isEvent = eventKeywords.some(k => fullText.includes(k));
-  if (!isEvent) return null;
-
-  // Time extraction via regex
-  const timeRegex = /\b(\d{1,2}(?::\d{2})?\s?[AP]M)\b/gi;
-  const times = fullText.match(timeRegex);
-
-  // Date extraction (multiple formats)
-  const dateRegex = /(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})|
-                     (jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s+\d{1,2}/gi;
-
-  return buildEventFromRegex(subject, times, dateRegex.exec(fullText));
-}
-\end{lstlisting}
+  \draw[arr=darkbg] (in)--(low);
+  \draw[arr=darkbg] (low)--(spam);
+  \draw[arr=darkbg] (spam) -- node[above,font=\tiny]{YES} (no);
+  \draw[arr=darkbg] (spam) -- node[right,font=\tiny]{NO} (evt);
+  \draw[arr=darkbg] (evt)  -- node[above,font=\tiny]{NO} (no2);
+  \draw[arr=darkbg] (evt)  -- node[right,font=\tiny]{YES} (time);
+  \draw[arr=darkbg] (time)--(date);
+  \draw[arr=darkbg] (date)--(ret);
+\end{tikzpicture}
+\caption{Regex-based Fallback Parser Flow}
+\end{figure}
 
 \section{Reminder Scheduler Service}
 
-\begin{lstlisting}[language=TypeScript, caption={reminderScheduler.service.ts}]
-export function startReminderScheduler(intervalMs = 5 * 60 * 1000) {
-  setInterval(async () => {
-    const now     = new Date();
-    const from    = new Date(now.getTime() + 55 * 60 * 1000); // now + 55 min
-    const to      = new Date(now.getTime() + 65 * 60 * 1000); // now + 65 min
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.55cm]
+  \node[term]                               (boot) {App Boot};
+  \node[proc=flowblue, below=of boot]       (q)    {PersonalEvent.find()\\date in [now+55min, now+65min]\\reminderSent = false};
+  \node[dec, below=of q]                    (any)  {Events\\found?};
+  \node[proc=floworange, below=of any]      (each) {For each event:\\look up user.expoPushToken};
+  \node[dec, below=of each]                 (tok)  {Token\\exists?};
+  \node[proc=flowgreen, below=of tok]       (push) {sendPushNotification()\\"\{icon\} Starting in 1 hour!"};
+  \node[proc=flowblue, below=of push]       (mark) {PersonalEvent.update()\\reminderSent = true};
+  \node[term, below=of mark]                (wait) {Wait 5 min · repeat};
 
-    const upcoming = await PersonalEvent.find({
-      date:          { $gte: from, $lte: to },
-      reminderSent:  { $ne: true }
-    }).populate('userId');
-
-    for (const event of upcoming) {
-      const user = event.userId as IUser;
-      if (!user.expoPushToken) continue;
-
-      await sendPushNotification(
-        user.expoPushToken,
-        `${event.icon} Starting in 1 hour!`,
-        `${event.title} · ${event.location}`
-      );
-
-      await PersonalEvent.findByIdAndUpdate(event._id,
-        { reminderSent: true }
-      );
-    }
-  }, intervalMs);
-}
-// 10-minute window (55–65 min) absorbs scheduler timing drift
-\end{lstlisting}
+  \draw[arr=darkbg] (boot)--(q);
+  \draw[arr=darkbg] (q)--(any);
+  \draw[arr=darkbg] (any) -- node[right,font=\tiny]{YES} (each);
+  \draw[arr=darkbg] (any.west) -- ++(-1,0) node[left,font=\tiny]{NO} |- (wait.west);
+  \draw[arr=darkbg] (each)--(tok);
+  \draw[arr=darkbg] (tok) -- node[right,font=\tiny]{YES} (push);
+  \draw[arr=darkbg] (tok.east) -- ++(1,0) node[right,font=\tiny]{NO} |- (wait.east);
+  \draw[arr=darkbg] (push)--(mark);
+  \draw[arr=darkbg] (mark)--(wait);
+\end{tikzpicture}
+\caption{Reminder Scheduler — 5-minute polling loop with 10-minute detection window (55–65 min)}
+\end{figure}
 
 \section{LHC Service}
 
-\begin{lstlisting}[language=TypeScript, caption={lhc.service.ts — Room Availability}]
-const LHC_ROOMS = ['110', '205', '206', '305', '306', '308'];
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.55cm]
+  % isLHCRoomAvailable
+  \node[term, minimum width=5cm]               (in1)  {isLHCRoomAvailable(room, start, end)};
+  \node[proc=flowblue, below=of in1]           (q1)   {Event.findOne()\\location~=LHC\{room\}\\date < end AND endDate > start};
+  \node[dec, below=of q1]                      (d1)   {Conflict\\found?};
+  \node[proc=flowred,  right=2.5cm of d1]      (r1)   {\{ available: false,\\  conflict: event \}};
+  \node[proc=flowgreen, below=of d1]           (r2)   {\{ available: true \}};
 
-// Checks if a room is available in a given time window
-export async function isLHCRoomAvailable(
-  room: string,
-  start: Date,
-  end: Date,
-  excludeEventId?: string
-): Promise<{ available: boolean; conflict?: IEvent }> {
+  \draw[arr=darkbg] (in1)--(q1);
+  \draw[arr=darkbg] (q1)--(d1);
+  \draw[arr=darkbg] (d1) -- node[above,font=\tiny]{YES} (r1);
+  \draw[arr=darkbg] (d1) -- node[right,font=\tiny]{NO}  (r2);
 
-  // Check global Event collection
-  const conflict = await Event.findOne({
-    _id:      { $ne: excludeEventId },
-    location: { $regex: `LHC.?${room}`, $options: 'i' },
-    date:     { $lt: end },
-    endDate:  { $gt: start }
-  });
+  % getLHCHeatmap — placed below
+  \node[term, minimum width=5cm, below=2.8cm of r2]  (in2)  {getLHCHeatmap(date)};
+  \node[proc=flowblue, below=of in2]                 (q2)   {Event.find()\\date in [dayStart, dayEnd]\\location contains 'LHC'};
+  \node[proc=flowgreen, below=of q2]                 (r3)   {Map to LHCBooking[]\\room, title, start, end, type, color};
 
-  if (conflict) return { available: false, conflict };
-  return { available: true };
-}
-
-// Returns all bookings for heatmap visualization
-export async function getLHCHeatmap(date: Date): Promise<LHCBooking[]> {
-  const dayStart = new Date(date); dayStart.setHours(0, 0, 0, 0);
-  const dayEnd   = new Date(date); dayEnd.setHours(23, 59, 59, 999);
-
-  const events = await Event.find({
-    date: { $gte: dayStart, $lte: dayEnd },
-    location: { $regex: 'LHC', $options: 'i' }
-  });
-
-  return events.map(e => ({
-    room:  extractLHCRoom(e.location),
-    title: e.title,
-    start: e.date.toISOString(),
-    end:   e.endDate?.toISOString() ?? addOneHour(e.date).toISOString(),
-    type:  'club',
-    color: e.color
-  }));
-}
-\end{lstlisting}
+  \draw[arr=darkbg] (in2)--(q2);
+  \draw[arr=darkbg] (q2)--(r3);
+\end{tikzpicture}
+\caption{LHC Service — Room availability check (top) and heatmap query (bottom)}
+\end{figure}
 
 \section{Push Notification Service}
 
-\begin{lstlisting}[language=TypeScript, caption={notification.service.ts}]
-export async function sendPushNotification(
-  expoPushToken: string,
-  title:         string,
-  body:          string,
-  data:          object = {}
-) {
-  // Validate token format
-  if (!expoPushToken.startsWith('ExponentPushToken[') &&
-      !expoPushToken.startsWith('ExpoPushToken[')) {
-    console.warn('Invalid Expo push token:', expoPushToken);
-    return;
-  }
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.55cm]
+  \node[term]                                (in)   {sendPushNotification(token, title, body)};
+  \node[dec, below=of in]                    (val)  {Token format\\valid?};
+  \node[proc=flowred, right=2.5cm of val]   (warn) {console.warn()\\return early};
+  \node[proc=flowblue, below=of val]         (post) {POST to Expo Push API\\https://exp.host/--/api/v2/push/send};
+  \node[proc=flowgreen, below=of post]       (ok)   {Notification delivered\\to user's device};
 
-  await axios.post('https://exp.host/--/api/v2/push/send', {
-    to:    expoPushToken,
-    sound: 'default',
-    title,
-    body,
-    data,
-  }, {
-    headers: { 'Content-Type': 'application/json' }
-  });
-}
-\end{lstlisting}
+  \draw[arr=darkbg] (in)--(val);
+  \draw[arr=darkbg] (val) -- node[above,font=\tiny]{INVALID} (warn);
+  \draw[arr=darkbg] (val) -- node[right,font=\tiny]{VALID}   (post);
+  \draw[arr=darkbg] (post)--(ok);
+\end{tikzpicture}
+\caption{Push Notification Service — Expo Push API delivery}
+\end{figure}
 
 \section{Cron Jobs}
 
-\begin{lstlisting}[language=TypeScript, caption={jobs/cron.ts — Daily Data Retention}]
-import cron from 'node-cron';
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.6cm]
+  \node[term, minimum width=6cm]           (t)  {Daily Cron — 00:00 midnight};
+  \node[proc=flowred, below=of t]          (j1) {Delete global Events\\older than 1 day};
+  \node[proc=floworange, below=of j1]      (j2) {Delete PersonalEvents\\older than 28 days};
+  \node[proc=flowpurple, below=of j2]      (j3) {Delete ProcessedEmail cache\\older than 7 days};
+  \node[proc=flowblue, below=of j3]        (log){console.log()\\deleted counts for each};
 
-export function initCronJobs() {
-  // Runs every day at midnight: 0 0 * * *
-  cron.schedule('0 0 * * *', async () => {
-    const now = new Date();
+  \draw[arr=darkbg] (t)--(j1);
+  \draw[arr=darkbg] (j1)--(j2);
+  \draw[arr=darkbg] (j2)--(j3);
+  \draw[arr=darkbg] (j3)--(log);
 
-    // 1. Delete global events older than 1 day
-    const events = await Event.deleteMany({
-      date: { $lt: new Date(now.getTime() - 1 * 24 * 60 * 60 * 1000) }
-    });
-
-    // 2. Delete personal events older than 28 days
-    const personal = await PersonalEvent.deleteMany({
-      createdAt: { $lt: new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000) }
-    });
-
-    // 3. Delete processed email cache older than 7 days
-    // Forces monthly re-analysis of recurring emails
-    const cache = await ProcessedEmail.deleteMany({
-      createdAt: { $lt: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000) }
-    });
-
-    console.log(`[CRON] Cleaned: ${events.deletedCount} events,
-      ${personal.deletedCount} personal, ${cache.deletedCount} cache`);
-  });
-}
-\end{lstlisting}
+  % annotation
+  \node[right=0.8cm of j1, font=\footnotesize, text=flowred!70, align=left]
+    {Keeps feed clean\\post-event};
+  \node[right=0.8cm of j2, font=\footnotesize, text=floworange!70, align=left]
+    {Long retention for\\inbox history};
+  \node[right=0.8cm of j3, font=\footnotesize, text=flowpurple!70, align=left]
+    {Forces re-analysis of\\recurring emails monthly};
+\end{tikzpicture}
+\caption{Cron Jobs — Data Retention Policy (node-cron schedule: \texttt{0 0 * * *})}
+\end{figure}
 
 % ─────────────────────────────────────────────────────────────
 \chapter{Mobile Application}
@@ -1009,82 +882,76 @@ export function initCronJobs() {
 
 PulseBoard uses \textbf{Expo Router} (file-based routing) — the file structure directly defines the navigation graph.
 
-\begin{lstlisting}[language=bash, caption={Expo Router Navigation Tree}]
-app/
-├── _layout.tsx           # Root Stack Navigator + ThemeProvider
-├── index.tsx             # Welcome screen (auto-redirects if token exists)
-├── auth/
-│   ├── login.tsx         # Email/password + Google OAuth login
-│   ├── register.tsx      # Registration (IITJ emails only)
-│   ├── verify-otp.tsx    # OTP verification
-│   └── forgot-password/  # Password reset flow
-├── tabs/
-│   ├── _layout.tsx       # Bottom Tab Navigator (5 tabs)
-│   ├── home.tsx          # Event feed + sidebar menu
-│   ├── clubs.tsx         # Club directory
-│   ├── inbox.tsx         # AI-parsed Gmail events
-│   ├── profile.tsx       # User profile
-│   └── calendar.tsx      # (via tab or route)
-├── club_tabs/            # Club admin portal (separate nav stack)
-│   ├── home.tsx
-│   ├── posts.tsx
-│   └── profile.tsx
-├── calendar.tsx          # Full calendar view
-├── heatmap.tsx           # LHC room heatmap
-├── sos.tsx               # Emergency contacts
-└── settings.tsx          # App settings
-\end{lstlisting}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  every node/.style={font=\footnotesize},
+  level 1/.style={sibling distance=3.8cm, level distance=1.2cm},
+  level 2/.style={sibling distance=1.8cm, level distance=1.1cm},
+  edge from parent/.style={draw, -Stealth, gray!60},
+]
+\node[troot] {app/}
+  child { node[tnode] {index.tsx\\(Welcome)} }
+  child { node[tnode] {auth/}
+    child { node[tnode, minimum width=1.6cm] {login} }
+    child { node[tnode, minimum width=1.6cm] {register} }
+    child { node[tnode, minimum width=1.6cm] {verify-otp} }
+  }
+  child { node[tnode] {tabs/}
+    child { node[tnode, minimum width=1.4cm] {home} }
+    child { node[tnode, minimum width=1.4cm] {clubs} }
+    child { node[tnode, minimum width=1.4cm] {inbox} }
+    child { node[tnode, minimum width=1.4cm] {profile} }
+  }
+  child { node[tnode] {club\_tabs/}
+    child { node[tnode, minimum width=1.4cm] {home} }
+    child { node[tnode, minimum width=1.4cm] {posts} }
+  }
+  child { node[tnode] {calendar\\heatmap\\sos\\settings} };
+\end{tikzpicture}
+\caption{Expo Router Navigation Tree — file path = route path}
+\end{figure}
 
-\begin{lstlisting}[language=TypeScript, caption={app/\_layout.tsx — Root Navigator}]
-export default function RootLayout() {
-  useEffect(() => {
-    // Register push notification token on every app launch
-    registerForPushNotifications().then(async (token) => {
-      if (!token) return;
-      await AsyncStorage.setItem('expoPushToken', token);
-      api.post('/users/save-push-token', { expoPushToken: token }).catch(() => {});
-    });
-  }, []);
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.55cm]
+  \node[term]                              (boot)  {App Launch};
+  \node[proc=flowblue, below=of boot]      (reg)   {registerForPushNotifications()\\save token to AsyncStorage};
+  \node[proc=flowblue, below=of reg]       (post)  {POST /users/save-push-token\\(background, non-blocking)};
+  \node[proc=flowpurple, below=of post]    (wrap)  {Wrap children in\\ThemeProvider};
+  \node[proc=flowblue, below=of wrap]      (stack) {Render Stack Navigator\\screenOptions: headerShown=false};
+  \node[proc=flowgreen, below=of stack]    (scr)   {Register screens:\\index, auth, tabs, calendar,\\settings, sos, heatmap};
 
-  return (
-    <ThemeProvider>
-      <StatusBar style="light" />
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="auth" />
-        <Stack.Screen name="tabs" />
-        <Stack.Screen name="calendar" />
-        <Stack.Screen name="settings" />
-        <Stack.Screen name="sos" />
-        <Stack.Screen name="heatmap" />
-      </Stack>
-    </ThemeProvider>
-  );
-}
-\end{lstlisting}
+  \draw[arr=darkbg] (boot)--(reg);
+  \draw[arr=darkbg] (reg)--(post);
+  \draw[arr=darkbg] (post)--(wrap);
+  \draw[arr=darkbg] (wrap)--(stack);
+  \draw[arr=darkbg] (stack)--(scr);
+\end{tikzpicture}
+\caption{app/\_layout.tsx — Root Navigator Initialization}
+\end{figure}
 
 \section{API Client Layer}
 
-\begin{lstlisting}[language=TypeScript, caption={src/api/client.ts — Axios Instance}]
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.6cm]
+  \node[proc=flowblue, minimum width=6cm]     (ax)   {axios.create()\\baseURL: EXPO\_PUBLIC\_API\_URL/api\\timeout: 15000ms};
+  \node[proc=floworange, below=of ax]         (int)  {Request Interceptor\\reads JWT from AsyncStorage};
+  \node[dec, below=of int]                    (tok)  {Token\\exists?};
+  \node[proc=flowgreen, below left=0.7cm and 1.5cm of tok]   (yes)  {Attach header:\\Authorization: Bearer \{token\}};
+  \node[proc=flowred, below right=0.7cm and 1.5cm of tok]   (no)   {Forward request\\unauthenticated};
+  \node[proc=flowblue, below=2cm of tok]      (out)  {Request sent to backend};
 
-const api = axios.create({
-  baseURL: `${process.env.EXPO_PUBLIC_API_URL}/api`,
-  timeout: 15000,
-});
-
-// Auto-attach JWT from AsyncStorage to every request
-api.interceptors.request.use(async (config) => {
-  const token = await AsyncStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-export default api;
-\end{lstlisting}
+  \draw[arr=darkbg] (ax)--(int);
+  \draw[arr=darkbg] (int)--(tok);
+  \draw[arr=darkbg] (tok) -- node[above left,font=\tiny]{YES} (yes);
+  \draw[arr=darkbg] (tok) -- node[above right,font=\tiny]{NO} (no);
+  \draw[arr=darkbg] (yes.south) |- (out.west);
+  \draw[arr=darkbg] (no.south)  |- (out.east);
+\end{tikzpicture}
+\caption{src/api/client.ts — Axios instance with automatic JWT injection}
+\end{figure}
 
 \section{Screen Breakdown}
 
@@ -1101,25 +968,35 @@ The splash/welcome screen that auto-redirects authenticated users to \code{/tabs
 
 \subsection{Home Screen (\texttt{tabs/home.tsx})}
 
-\begin{lstlisting}[language=TypeScript, caption={Home Screen — Data Loading}]
-const loadData = async () => {
-  const [userData, eventData, allClubs, personalData] = await Promise.all([
-    getUserProfile(),       // GET /users/me
-    getEventFeed(),         // GET /events/feed
-    getAllClubs(),           // GET /clubs
-    getPersonalEvents(),    // GET /personal-events
-  ]);
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.55cm]
+  \node[term]                                (start) {Screen Mount};
+  \node[proc=flowblue, below=of start]       (par)   {Promise.all() — 4 parallel requests};
 
-  // Check if this user is a club admin
-  const linkedClub = allClubs.find(c =>
-    c.email?.toLowerCase() === profile.email?.toLowerCase()
-  );
-  setAdminClub(linkedClub);   // Shows "Publish Event" in sidebar
+  \node[procS=flowblue,  below left=0.8cm and 3.5cm of par]  (u) {GET /users/me\\user profile};
+  \node[procS=flowblue,  below left=0.8cm and 1.0cm of par]  (e) {GET /events/feed\\club events};
+  \node[procS=flowblue,  below right=0.8cm and 1.0cm of par] (c) {GET /clubs\\all clubs};
+  \node[procS=flowblue,  below right=0.8cm and 3.5cm of par] (p) {GET /personal-events\\inbox events};
 
-  // Separate interview events from personal events
-  setInterviewEvents(personalData.filter(e => e.category === 'interviews'));
-};
-\end{lstlisting}
+  \node[proc=flowpurple, below=2.2cm of par]  (join) {Merge results};
+  \node[proc=floworange, below=of join]        (adm)  {Check if user is club admin\\(email match in clubs list)};
+  \node[proc=flowgreen,  below=of adm]         (rend) {Render: Happening Now\\Coming Up · Interview alerts};
+
+  \draw[arr=darkbg] (start)--(par);
+  \draw[arr=darkbg] (par.south) -- ++(0,-0.3) -| (u.north);
+  \draw[arr=darkbg] (par.south) -- ++(0,-0.3) -| (e.north);
+  \draw[arr=darkbg] (par.south) -- ++(0,-0.3) -| (c.north);
+  \draw[arr=darkbg] (par.south) -- ++(0,-0.3) -| (p.north);
+  \draw[arr=darkbg] (u.south) |- (join.west);
+  \draw[arr=darkbg] (e.south) |- (join.west);
+  \draw[arr=darkbg] (c.south) |- (join.east);
+  \draw[arr=darkbg] (p.south) |- (join.east);
+  \draw[arr=darkbg] (join)--(adm);
+  \draw[arr=darkbg] (adm)--(rend);
+\end{tikzpicture}
+\caption{Home Screen — Parallel data loading with Promise.all()}
+\end{figure}
 
 \textbf{Features:}
 \begin{itemize}[leftmargin=*]
@@ -1132,37 +1009,34 @@ const loadData = async () => {
 
 \subsection{Smart Inbox Screen (\texttt{tabs/inbox.tsx})}
 
-\begin{lstlisting}[language=TypeScript, caption={Inbox Screen — Categories \& Filter Logic}]
-// 8 categories (personal is default for manually created events)
-const CATEGORY_META = {
-  personal:         { label: 'Personal',     icon: '👤' },
-  clubs:            { label: 'Clubs',         icon: '🎯' },
-  interviews:       { label: 'Interviews',    icon: '💼' },
-  mess:             { label: 'Mess',          icon: '🍽' },
-  google_classroom: { label: 'Classroom',     icon: '📚' },
-  lost_found:       { label: 'Lost & Found',  icon: '🔍' },
-  academic:         { label: 'Academic',      icon: '🎓' },
-  general:          { label: 'General',       icon: '📌' },
-};
-
-const FILTERS = [
-  { label: 'ALL',        value: 'all' },
-  { label: 'PERSONAL',   value: 'personal' },   // <-- new
-  { label: 'CLUBS',      value: 'clubs' },
-  { label: 'INTERVIEWS', value: 'interviews' },
-  { label: 'MESS',       value: 'mess' },
-  { label: 'CLASSROOM',  value: 'google_classroom' },
-  { label: 'LOST & FOUND', value: 'lost_found' },
-  { label: 'ACADEMIC',   value: 'academic' },
-  { label: 'GENERAL',    value: 'general' },
-];
-
-// Muted categories are excluded server-side via $nin query;
-// filter chips for muted categories render at 40% opacity with a 🔕 suffix.
-const filteredEvents = filter === 'all'
-  ? events
-  : events.filter(e => e.category === filter);
-\end{lstlisting}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.5cm]
+  % Category grid
+  \foreach \cat/\ico/\col/\x/\y in {
+    personal/👤/flowblue/0/0,
+    clubs/🎯/floworange/2.6/0,
+    interviews/💼/flowred/5.2/0,
+    mess/🍽/flowgreen/7.8/0,
+    classroom/📚/flowblue/0/-1.1,
+    lost\_found/🔍/flowpurple/2.6/-1.1,
+    academic/🎓/flowblue/5.2/-1.1,
+    general/📌/type/7.8/-1.1
+  }{
+    \node[rectangle, rounded corners=4pt, draw=\col!60, fill=\col!10,
+          minimum width=2.3cm, minimum height=0.85cm, align=center,
+          font=\small, inner sep=3pt]
+      at (\x,\y) {\ico\\\textbf{\cat}};
+  }
+  % label
+  \node[above=0.5cm, font=\small\bfseries, text=tableheadbg]
+    at (3.9, 0.5) {8 Categories (Personal = default for manual events)};
+  % mute note
+  \node[below=0.3cm, font=\footnotesize, text=gray, align=center]
+    at (3.9, -1.9) {Muted categories excluded server-side via \$nin · shown dimmed with 🔕 on filter chips};
+\end{tikzpicture}
+\caption{Smart Inbox — Category Map}
+\end{figure}
 
 \textbf{User-facing features:}
 \begin{itemize}[leftmargin=*]
@@ -1177,7 +1051,7 @@ const filteredEvents = filter === 'all'
 \begin{itemize}[leftmargin=*]
   \item \textbf{Hero banner} — tinted with the event's accent color; decorative background blobs; large emoji centered; category badge and LIVE badge overlaid
   \item \textbf{Action bar} — close (X) and Delete float inside the hero header
-  \item \textbf{Info chips} — date, time, and location rendered as individual pill chips (not a plain list), each with a color-matched icon
+  \item \textbf{Info chips} — date, time, and location rendered as individual pill chips, each with a color-matched icon
   \item \textbf{Source card} — inset card showing the originating email sender and subject
 \end{itemize}
 
@@ -1193,30 +1067,24 @@ const filteredEvents = filter === 'all'
 
 \subsection{Calendar Screen (\texttt{calendar.tsx})}
 
-\begin{lstlisting}[language=TypeScript, caption={Calendar — Time Parsing Logic}]
-// Parses "6:00 PM – 8:00 PM" → ISO date objects
-function parseTimeDisplay(timeDisplay: string, baseDate: string) {
-  const timeRangeRegex = /(\d{1,2}(?::\d{2})?\s?[AP]M)\s*[-–]\s*(\d{1,2}(?::\d{2})?\s?[AP]M)/i;
-  const singleTimeRegex = /(\d{1,2}(?::\d{2})?\s?[AP]M)/i;
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.55cm]
+  \node[term]                                (in)   {Input: timeDisplay string\\e.g. "6:00 PM – 8:00 PM"};
+  \node[dec, below=of in]                    (rng)  {Time range\\regex match?};
+  \node[proc=flowgreen, right=2.5cm of rng] (r1)   {Return \{start, end\}\\from both times};
+  \node[dec, below=of rng]                   (sngl) {Single time\\regex match?};
+  \node[proc=flowgreen, right=2.5cm of sngl](r2)   {Return \{start,\\end=start+1h\}};
+  \node[proc=floworange, below=of sngl]      (def)  {Default fallback:\\9 AM – 10 AM};
 
-  const rangeMatch = timeDisplay.match(timeRangeRegex);
-  if (rangeMatch) {
-    return {
-      start: parseTime(rangeMatch[1], baseDate),
-      end:   parseTime(rangeMatch[2], baseDate)
-    };
-  }
-
-  const singleMatch = timeDisplay.match(singleTimeRegex);
-  if (singleMatch) {
-    const start = parseTime(singleMatch[1], baseDate);
-    return { start, end: addOneHour(start) };
-  }
-
-  // Default: 9 AM – 10 AM
-  return { start: setTime(baseDate, 9), end: setTime(baseDate, 10) };
-}
-\end{lstlisting}
+  \draw[arr=darkbg] (in)--(rng);
+  \draw[arr=darkbg] (rng)  -- node[above,font=\tiny]{YES} (r1);
+  \draw[arr=darkbg] (rng)  -- node[right,font=\tiny]{NO}  (sngl);
+  \draw[arr=darkbg] (sngl) -- node[above,font=\tiny]{YES} (r2);
+  \draw[arr=darkbg] (sngl) -- node[right,font=\tiny]{NO}  (def);
+\end{tikzpicture}
+\caption{Calendar — \texttt{parseTimeDisplay()} logic for converting human-readable times to ISO dates}
+\end{figure}
 
 \subsection{LHC Heatmap Screen (\texttt{heatmap.tsx})}
 
@@ -1241,26 +1109,20 @@ function parseTimeDisplay(timeDisplay: string, baseDate: string) {
 
 \section{Theme Context}
 
-\begin{lstlisting}[language=TypeScript, caption={src/context/ThemeContext.tsx}]
-export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { setColorScheme } = useNativeWindColorScheme();
-  const [theme] = useState<'light' | 'dark'>('dark');
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.6cm]
+  \node[proc=flowblue, minimum width=6cm]   (tp)   {ThemeProvider mounts};
+  \node[proc=floworange, below=of tp]       (set)  {useEffect():\\setColorScheme('dark')\\via NativeWind};
+  \node[proc=flowpurple, below=of set]      (ctx)  {ThemeContext.Provider\\value: \{ isDark: true \}};
+  \node[proc=flowgreen, below=of ctx]       (use)  {Any component: useTheme()\\→ isDark: true/false};
 
-  useEffect(() => {
-    // Lock to dark mode globally — activates dark: Tailwind classes
-    setColorScheme('dark');
-  }, []);
-
-  return (
-    <ThemeContext.Provider value={{ theme, toggleTheme: () => {}, isDark: true }}>
-      {children}
-    </ThemeContext.Provider>
-  );
-};
-
-// Usage in any component:
-// const { isDark } = useTheme();
-\end{lstlisting}
+  \draw[arr=darkbg] (tp)--(set);
+  \draw[arr=darkbg] (set)--(ctx);
+  \draw[arr=darkbg] (ctx)--(use);
+\end{tikzpicture}
+\caption{ThemeContext — Dark mode locked globally via NativeWind \texttt{setColorScheme}}
+\end{figure}
 
 \begin{warnbox}{Important: darkMode config}
 \code{tailwind.config.js} must use \texttt{darkMode: "media"} (not \texttt{"class"}) for NativeWind's \code{setColorScheme()} to activate \texttt{dark:} prefixed classes. Using \texttt{"class"} mode requires a DOM-level \texttt{.dark} parent class which doesn't exist in React Native.
@@ -1272,86 +1134,147 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
 
 \section{User Registration Flow}
 
-\begin{lstlisting}[language=bash, caption={Registration Sequence}]
-Mobile                 Backend              MongoDB              Gmail SMTP
-  |                      |                     |                     |
-  |-- POST /register --> |                     |                     |
-  |  { name, email,      |                     |                     |
-  |    password }        |-- bcrypt hash() --> |                     |
-  |                      |-- check club email->|                     |
-  |                      |-- User.create() --> |                     |
-  |                      |-- generateOTP() --> |                     |
-  |                      |-- sendOtpEmail() -------------------- --> |
-  |<-- 201 { email } --- |                     |                     |
-  |                      |                     |                     |
-  |-- POST /verify-otp ->|                     |                     |
-  |  { email, otp }      |-- validateOTP() --> |                     |
-  |                      |-- markVerified() --> |                    |
-  |                      |-- signJWT() ------> |                     |
-  |<-- 200 { token } --- |                     |                     |
-  |-- AsyncStorage.setItem('token') [mobile]   |                     |
-  |-- POST /save-push-token [background]       |                     |
-\end{lstlisting}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  actor/.style={rectangle, rounded corners=3pt, draw=tableheadbg,
+                fill=tableheadbg, text=white, font=\small\bfseries,
+                minimum width=2.3cm, minimum height=0.65cm, align=center},
+  smsg/.style={-{Stealth}, thick},
+  sret/.style={-{Stealth}, thick, dashed, gray},
+  sll/.style={dashed, gray!40, line width=0.4pt},
+]
+  % Actors
+  \node[actor] (M)  at (0,0)    {Mobile};
+  \node[actor] (B)  at (4.5,0)  {Backend};
+  \node[actor] (DB) at (9,0)    {MongoDB};
+  \node[actor] (SM) at (12.5,0) {SMTP};
 
-\section{Gmail Email → Smart Inbox Flow}
+  % Lifelines
+  \foreach \a in {M,B,DB,SM}
+    \draw[sll] (\a.south) -- ++(0,-9.5);
 
-\begin{lstlisting}[language=bash, caption={Email Parsing Pipeline}]
-Gmail              GmailWatcher        ProcessedEmail    Groq API     MongoDB
-  |                    |  (every 5min)       |               |             |
-  |                    |-- fetch users ------------------------------>     |
-  |                    |<-- users with googleAccessToken + pushToken --   |
-  |                    |                     |               |             |
-  |<-- Gmail API req --| (50 unread emails)  |               |             |
-  |--> messages[] ---> |                     |               |             |
-  |                    |                     |               |             |
-  |                    |-- extract Message-ID|               |             |
-  |                    |-- findOne() ------> |               |             |
-  |                    |                     |               |             |
-  |   [Cache MISS]     |<-- null ----------- |               |             |
-  |                    |-- parseEventFromEmail() ----------> |             |
-  |                    |                     |   LLM output <|             |
-  |                    |-- create cache ---- |               |             |
-  |                    |                     |               |             |
-  |   [Cache HIT]      |<-- cached result -- |               |             |
-  |                    |                     |               |             |
-  |                    |-- PersonalEvent.upsert() --------------------------->
-  |                    |-- if club account: Event.create() ----------------->
-  |                    |-- sendPushNotification() (interviews only)           |
-\end{lstlisting}
+  % Messages
+  \draw[smsg] (0,-0.8) -- node[above,font=\tiny]{POST /register \{name, email, password\}} (4.5,-0.8);
+  \draw[smsg] (4.5,-1.5) -- node[above,font=\tiny]{bcrypt.hash(password)} (9,-1.5);
+  \draw[smsg] (4.5,-2.2) -- node[above,font=\tiny]{User.create()} (9,-2.2);
+  \draw[sret] (9,-2.9)   -- node[above,font=\tiny]{user saved} (4.5,-2.9);
+  \draw[smsg] (4.5,-3.6) -- node[above,font=\tiny]{sendOtpEmail()} (12.5,-3.6);
+  \draw[sret] (4.5,-4.3) -- node[above,font=\tiny]{201 \{email\}} (0,-4.3);
+
+  \node[font=\tiny, right=0.1cm] at (0,-4.3) {};
+  \draw[smsg] (0,-5.0) -- node[above,font=\tiny]{POST /verify-otp \{email, otp\}} (4.5,-5.0);
+  \draw[smsg] (4.5,-5.7) -- node[above,font=\tiny]{validateOTP() + markVerified()} (9,-5.7);
+  \draw[sret] (9,-6.4)  -- node[above,font=\tiny]{updated} (4.5,-6.4);
+  \draw[sret] (4.5,-7.1)-- node[above,font=\tiny]{200 \{token: JWT\}} (0,-7.1);
+  \draw[smsg] (0,-7.8)  -- node[above,font=\tiny]{AsyncStorage.setItem('token') + POST /save-push-token} (4.5,-7.8);
+\end{tikzpicture}
+\caption{User Registration \& Verification Sequence}
+\end{figure}
+
+\section{Gmail Email \textrightarrow{} Smart Inbox Flow}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  actor/.style={rectangle, rounded corners=3pt, draw=tableheadbg,
+                fill=tableheadbg, text=white, font=\small\bfseries,
+                minimum width=2.3cm, minimum height=0.65cm, align=center},
+  smsg/.style={-{Stealth}, thick},
+  sret/.style={-{Stealth}, thick, dashed, gray},
+  sll/.style={dashed, gray!40, line width=0.4pt},
+]
+  \node[actor] (GW) at (0,0)    {GmailWatcher};
+  \node[actor] (DB) at (4,0)    {MongoDB};
+  \node[actor] (GR) at (8,0)    {Groq API};
+  \node[actor] (GL) at (12,0)   {Gmail API};
+
+  \foreach \a in {GW,DB,GR,GL}
+    \draw[sll] (\a.south) -- ++(0,-11);
+
+  \draw[smsg] (0,-0.8)  -- node[above,font=\tiny]{fetch users with token + pushToken} (4,-0.8);
+  \draw[sret] (4,-1.5)  -- node[above,font=\tiny]{users[]} (0,-1.5);
+  \draw[smsg] (0,-2.2)  -- node[above,font=\tiny]{GET /messages (50 unread, 30d)} (12,-2.2);
+  \draw[sret] (12,-2.9) -- node[above,font=\tiny]{messages[]} (0,-2.9);
+  \draw[smsg] (0,-3.6)  -- node[above,font=\tiny]{ProcessedEmail.findOne(messageId)} (4,-3.6);
+  \draw[sret] (4,-4.3)  -- node[above,font=\tiny]{null (MISS)} (0,-4.3);
+  \draw[smsg] (0,-5.0)  -- node[above,font=\tiny]{parseEventFromEmail(subject, body)} (8,-5.0);
+  \draw[sret] (8,-5.7)  -- node[above,font=\tiny]{ParsedEvent JSON} (0,-5.7);
+  \draw[smsg] (0,-6.4)  -- node[above,font=\tiny]{ProcessedEmail.create()} (4,-6.4);
+
+  \node[font=\tiny\itshape, right=0.2cm] at (0,-7.1) {[Cache HIT path: skip Groq, reuse cached result]};
+
+  \draw[smsg] (0,-7.8)  -- node[above,font=\tiny]{PersonalEvent.upsert()} (4,-7.8);
+  \draw[smsg] (0,-8.5)  -- node[above,font=\tiny]{if club: Event.create()} (4,-8.5);
+  \draw[smsg] (0,-9.2)  -- node[above,font=\tiny]{if interviews: sendPushNotification()} (4,-9.2);
+  \draw[smsg] (0,-9.9)  -- node[above,font=\tiny]{\$addToSet: processedByUsers} (4,-9.9);
+\end{tikzpicture}
+\caption{Gmail Email Parsing Pipeline — GmailWatcher to Smart Inbox}
+\end{figure}
 
 \section{Event Creation Flow (Club Admin)}
 
-\begin{lstlisting}[language=bash, caption={Club Event Publishing}]
-Mobile (Club Admin)      Backend           Cloudinary        MongoDB
-  |                         |                   |                |
-  | POST /events            |                   |                |
-  | FormData:               |                   |                |
-  |   title, location,      |-- upload image -->|                |
-  |   date, timeDisplay,    |<-- imageUrl ----  |                |
-  |   badge, image          |                   |                |
-  |                         |-- check LHC availability -------> |
-  |                         |   if conflict: 409 Conflict        |
-  |                         |-- Event.create() ---------------> |
-  |                         |-- get club followers ------------> |
-  |                         |-- sendPushNotification() x N      |
-  |<-- 201 { event } -----  |                   |                |
-\end{lstlisting}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  actor/.style={rectangle, rounded corners=3pt, draw=tableheadbg,
+                fill=tableheadbg, text=white, font=\small\bfseries,
+                minimum width=2.5cm, minimum height=0.65cm, align=center},
+  smsg/.style={-{Stealth}, thick},
+  sret/.style={-{Stealth}, thick, dashed, gray},
+  sll/.style={dashed, gray!40, line width=0.4pt},
+]
+  \node[actor] (M)  at (0,0)   {Mobile (Admin)};
+  \node[actor] (B)  at (4.5,0) {Backend};
+  \node[actor] (CL) at (9,0)   {Cloudinary};
+  \node[actor] (DB) at (12.5,0){MongoDB};
+
+  \foreach \a in {M,B,CL,DB}
+    \draw[sll] (\a.south) -- ++(0,-9);
+
+  \draw[smsg] (0,-0.8) -- node[above,font=\tiny]{POST /events (FormData: title, date, image…)} (4.5,-0.8);
+  \draw[smsg] (4.5,-1.5) -- node[above,font=\tiny]{upload image} (9,-1.5);
+  \draw[sret] (9,-2.2)  -- node[above,font=\tiny]{imageUrl} (4.5,-2.2);
+  \draw[smsg] (4.5,-2.9) -- node[above,font=\tiny]{isLHCRoomAvailable(room, start, end)} (12.5,-2.9);
+  \draw[sret] (12.5,-3.6)-- node[above,font=\tiny]{available: true} (4.5,-3.6);
+  \draw[smsg] (4.5,-4.3) -- node[above,font=\tiny]{Event.create()} (12.5,-4.3);
+  \draw[smsg] (4.5,-5.0) -- node[above,font=\tiny]{get club followers} (12.5,-5.0);
+  \draw[sret] (12.5,-5.7)-- node[above,font=\tiny]{followers[]} (4.5,-5.7);
+  \draw[smsg] (4.5,-6.4) -- node[above,font=\tiny]{sendPushNotification() × N followers} (12.5,-6.4);
+  \draw[sret] (4.5,-7.8) -- node[above,font=\tiny]{201 \{event\}} (0,-7.8);
+\end{tikzpicture}
+\caption{Club Admin Event Publishing — Image upload, conflict check, fan-out notifications}
+\end{figure}
 
 \section{1-Hour Reminder Flow}
 
-\begin{lstlisting}[language=bash, caption={Reminder Scheduler Sequence}]
-ReminderScheduler (5-min interval)       MongoDB         Expo Push API
-  |                                          |                 |
-  |-- PersonalEvent.find({                   |                 |
-  |     date: { $gte: now+55m, $lte: now+65m},                |
-  |     reminderSent: false                  |                 |
-  |   }) ----------------------------------> |                 |
-  |<-- [ event1, event2, ... ] ------------ |                 |
-  |                                          |                 |
-  | for each event:                          |                 |
-  |   sendPushNotification(token, ...) -------------------- -> |
-  |   PersonalEvent.update({ reminderSent: true }) -------> |  |
-\end{lstlisting}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  actor/.style={rectangle, rounded corners=3pt, draw=tableheadbg,
+                fill=tableheadbg, text=white, font=\small\bfseries,
+                minimum width=2.8cm, minimum height=0.65cm, align=center},
+  smsg/.style={-{Stealth}, thick},
+  sret/.style={-{Stealth}, thick, dashed, gray},
+  sll/.style={dashed, gray!40, line width=0.4pt},
+]
+  \node[actor] (RS) at (0,0)   {ReminderScheduler};
+  \node[actor] (DB) at (5.5,0) {MongoDB};
+  \node[actor] (EX) at (11,0)  {Expo Push API};
+
+  \foreach \a in {RS,DB,EX}
+    \draw[sll] (\a.south) -- ++(0,-7.5);
+
+  \draw[smsg] (0,-0.8) -- node[above,font=\tiny]{PersonalEvent.find(\{date: now+55m..now+65m, reminderSent:false\})} (5.5,-0.8);
+  \draw[sret] (5.5,-1.6) -- node[above,font=\tiny]{[event1, event2, …]} (0,-1.6);
+  \draw[smsg] (0,-2.4) -- node[above,font=\tiny]{for each: sendPushNotification(token, title, body)} (11,-2.4);
+  \draw[sret] (11,-3.2) -- node[above,font=\tiny]{200 OK} (0,-3.2);
+  \draw[smsg] (0,-4.0) -- node[above,font=\tiny]{PersonalEvent.update(\{reminderSent: true\})} (5.5,-4.0);
+  \node[font=\footnotesize\itshape, right=0.5cm, align=left] at (0,-5.5)
+    {10-minute detection window (55–65 min)\\absorbs scheduler timing drift.};
+\end{tikzpicture}
+\caption{1-Hour Pre-Event Push Reminder Sequence}
+\end{figure}
 
 % ─────────────────────────────────────────────────────────────
 \chapter{Authentication \& Security}
@@ -1359,25 +1282,32 @@ ReminderScheduler (5-min interval)       MongoDB         Expo Push API
 
 \section{JWT Authentication}
 
-\begin{lstlisting}[language=TypeScript, caption={auth.middleware.ts}]
-export const authenticate = (req: Request, res: Response, next: NextFunction) => {
-  const header = req.headers.authorization;
-  if (!header?.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'No token provided' });
-  }
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.55cm]
+  \node[term]                              (req)  {Incoming Request};
+  \node[dec, below=of req]                 (hdr)  {Authorization\\header present?};
+  \node[proc=flowred, right=2.5cm of hdr] (e1)   {401 No token\\provided};
+  \node[dec, below=of hdr]                 (fmt)  {Starts with\\Bearer?};
+  \node[proc=flowred, right=2.5cm of fmt] (e2)   {401 Malformed\\token};
+  \node[proc=flowblue, below=of fmt]       (ver)  {jwt.verify(token,\\JWT\_SECRET)};
+  \node[dec, below=of ver]                 (ok)   {Valid?};
+  \node[proc=flowred, right=2.5cm of ok]  (e3)   {401 Invalid or\\expired token};
+  \node[proc=flowgreen, below=of ok]       (att)  {Attach decoded payload\\to req.user};
+  \node[term, below=of att]                (nxt)  {next() — continue\\to controller};
 
-  const token = header.split(' ')[1];
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
-    req.user = decoded;
-    next();
-  } catch {
-    res.status(401).json({ error: 'Invalid or expired token' });
-  }
-};
-// Token expiry: 7 days
-// Algorithm:   HS256
-\end{lstlisting}
+  \draw[arr=darkbg] (req)--(hdr);
+  \draw[arr=darkbg] (hdr) -- node[above,font=\tiny]{NO} (e1);
+  \draw[arr=darkbg] (hdr) -- node[right,font=\tiny]{YES} (fmt);
+  \draw[arr=darkbg] (fmt) -- node[above,font=\tiny]{NO} (e2);
+  \draw[arr=darkbg] (fmt) -- node[right,font=\tiny]{YES} (ver);
+  \draw[arr=darkbg] (ver)--(ok);
+  \draw[arr=darkbg] (ok) -- node[above,font=\tiny]{NO} (e3);
+  \draw[arr=darkbg] (ok) -- node[right,font=\tiny]{YES} (att);
+  \draw[arr=darkbg] (att)--(nxt);
+\end{tikzpicture}
+\caption{auth.middleware.ts — JWT verification flow. Token expiry: 7 days · Algorithm: HS256}
+\end{figure}
 
 \section{Google OAuth Flow}
 
@@ -1401,20 +1331,35 @@ Library      & \texttt{google-auth-library} verifyIdToken  & \texttt{getToken(co
 
 \section{Password Security}
 
-\begin{lstlisting}[language=TypeScript, caption={Password Hashing (bcryptjs)}]
-// Registration
-const salt = await bcrypt.genSalt(10);
-user.password = await bcrypt.hash(password, salt);
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[node distance=0.6cm]
 
-// Login verification
-const valid = await bcrypt.compare(plainPassword, user.password);
+  % Registration path
+  \node[term, minimum width=5cm]               (reg)  {Registration};
+  \node[proc=flowblue, below=of reg]           (gs)   {bcrypt.genSalt(10)};
+  \node[proc=flowblue, below=of gs]            (hash) {bcrypt.hash(password, salt)};
+  \node[proc=flowgreen, below=of hash]         (save) {store hashed password in DB};
 
-// OTP generation
-export function generateOtp(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-// OTP validity: 10 minutes for registration, 15 minutes for reset
-\end{lstlisting}
+  \draw[arr=darkbg] (reg)--(gs);
+  \draw[arr=darkbg] (gs)--(hash);
+  \draw[arr=darkbg] (hash)--(save);
+
+  % Login path (to the right)
+  \node[term, minimum width=5cm, right=2.5cm of reg]         (login){Login};
+  \node[proc=flowblue, below=of login]         (cmp)  {bcrypt.compare(plain, hashed)};
+  \node[dec, below=of cmp]                     (chk)  {Match?};
+  \node[proc=flowgreen, below left=0.7cm and 1cm of chk]   (jwt)  {Sign JWT\\return token};
+  \node[proc=flowred, below right=0.7cm and 1cm of chk]   (rej)  {401 Invalid\\credentials};
+
+  \draw[arr=darkbg] (login)--(cmp);
+  \draw[arr=darkbg] (cmp)--(chk);
+  \draw[arr=darkbg] (chk) -- node[left,font=\tiny]{YES} (jwt);
+  \draw[arr=darkbg] (chk) -- node[right,font=\tiny]{NO} (rej);
+
+\end{tikzpicture}
+\caption{Password security — bcryptjs at 10 salt rounds. OTP validity: 10 min (registration), 15 min (reset).}
+\end{figure}
 
 % ─────────────────────────────────────────────────────────────
 \chapter{Configuration \& Deployment}
@@ -1424,51 +1369,51 @@ export function generateOtp(): string {
 
 \subsection{Backend (\texttt{pulseboard\_backend/.env})}
 
-\begin{lstlisting}[language=bash, caption={Backend Environment Variables}]
-# Database
-MONGO_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/pulseboard
-
-# Authentication
-JWT_SECRET=your-secret-key-min-32-chars
-ADMIN_SEED_KEY=pulseboard_admin_2026
-
-# Google OAuth
-GOOGLE_CLIENT_ID=xxx.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=GOCSPX-xxxx
-GOOGLE_REDIRECT_URI=http://localhost:8082/auth/google/callback
-GOOGLE_MOBILE_CLIENT_ID=xxx.apps.googleusercontent.com
-
-# Email Services
-GMAIL_WATCHER_USER=your-gmail@gmail.com
-GMAIL_APP_PASSWORD=xxxx xxxx xxxx xxxx
-SENDGRID_API_KEY=SG.xxxx
-SENDGRID_FROM_EMAIL=noreply@pulseboard23.gmail.com
-MAILGUN_API_KEY=xxxx
-MAILGUN_DOMAIN=sandbox.mailgun.org
-
-# AI Services
-GROQ_API_KEY=gsk_xxxx
-GEMINI_API_KEY=AIzaSy_xxxx        # Optional fallback
-HUGGING_FACE_TOKEN=hf_xxxx        # For BART classifier
-
-# File Storage (Cloudinary)
-CLOUDINARY_CLOUD_NAME=your-cloud
-CLOUDINARY_API_KEY=xxxx
-CLOUDINARY_API_SECRET=xxxx
-
-# Server
-PORT=8082
-\end{lstlisting}
+\begin{table}[H]
+\centering
+\rowcolors{2}{rowodd}{roweven}
+\begin{tabularx}{\textwidth}{>{\ttfamily\small}l X}
+\rowcolor{tableheadbg}
+\color{white}\normalfont Variable & \color{white}Purpose \\
+\toprule
+MONGO\_URI              & MongoDB Atlas connection string \\
+JWT\_SECRET             & HS256 signing key (min 32 chars) \\
+ADMIN\_SEED\_KEY        & Seed key for admin account creation \\
+GOOGLE\_CLIENT\_ID      & Web OAuth 2.0 client ID \\
+GOOGLE\_CLIENT\_SECRET  & Web OAuth 2.0 client secret \\
+GOOGLE\_REDIRECT\_URI   & OAuth callback URL \\
+GOOGLE\_MOBILE\_CLIENT\_ID & Expo/mobile OAuth client ID \\
+GMAIL\_APP\_PASSWORD    & App-specific Gmail SMTP password \\
+SENDGRID\_API\_KEY      & SendGrid transactional email \\
+SENDGRID\_FROM\_EMAIL   & Sender address for password resets \\
+MAILGUN\_API\_KEY       & Mailgun inbound webhook key \\
+MAILGUN\_DOMAIN         & Mailgun sandbox domain \\
+GROQ\_API\_KEY          & Groq AI API key (gsk\_\ldots) \\
+GEMINI\_API\_KEY        & Optional fallback LLM \\
+CLOUDINARY\_CLOUD\_NAME & Cloudinary account name \\
+CLOUDINARY\_API\_KEY    & Cloudinary upload key \\
+CLOUDINARY\_API\_SECRET & Cloudinary upload secret \\
+PORT                    & HTTP server port (default 8082) \\
+\bottomrule
+\end{tabularx}
+\caption{Backend Environment Variables}
+\end{table}
 
 \subsection{Mobile (\texttt{pulseboard\_mobile/.env})}
 
-\begin{lstlisting}[language=bash, caption={Mobile Environment Variables}]
-# Backend API URL (use local IP for Expo Go)
-EXPO_PUBLIC_API_URL=http://172.31.97.254:8082
-
-# Google OAuth (web client ID for OAuth flow)
-EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID=xxx.apps.googleusercontent.com
-\end{lstlisting}
+\begin{table}[H]
+\centering
+\rowcolors{2}{rowodd}{roweven}
+\begin{tabularx}{\textwidth}{>{\ttfamily\small}l X}
+\rowcolor{tableheadbg}
+\color{white}\normalfont Variable & \color{white}Purpose \\
+\toprule
+EXPO\_PUBLIC\_API\_URL            & Backend base URL — must be local network IP, not localhost \\
+EXPO\_PUBLIC\_GOOGLE\_WEB\_CLIENT\_ID & Google web client ID for OAuth flow \\
+\bottomrule
+\end{tabularx}
+\caption{Mobile Environment Variables}
+\end{table}
 
 \begin{warnbox}{Local Development Note}
 The \code{EXPO\_PUBLIC\_API\_URL} must use your machine's local network IP (not \texttt{localhost}) since the Expo app runs on a physical device. Run \texttt{ipconfig getifaddr en0} on macOS to get the current IP. This IP changes on every network reconnect.
@@ -1476,53 +1421,47 @@ The \code{EXPO\_PUBLIC\_API\_URL} must use your machine's local network IP (not 
 
 \section{Expo App Configuration}
 
-\begin{lstlisting}[language=JSON, caption={pulseboard\_mobile/app.json (excerpt)}]
-{
-  "expo": {
-    "name": "pulseboard_mobile",
-    "slug": "pulseboard_mobile",
-    "scheme": "com.anonymous.pulseboard-mobile",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "newArchEnabled": false,
-    "plugins": [
-      "expo-router",
-      "expo-asset",
-      ["expo-notifications", {
-        "icon": "./assets/icon.png",
-        "color": "#050505"
-      }],
-      "@react-native-community/datetimepicker"
-    ],
-    "ios": {
-      "bundleIdentifier": "com.anonymous.pulseboard-mobile"
-    },
-    "android": {
-      "package": "com.anonymous.pulseboard_mobile",
-      "useNextNotificationsApi": true,
-      "predictiveBackGestureEnabled": false
-    }
-  }
-}
-\end{lstlisting}
+\begin{table}[H]
+\centering
+\rowcolors{2}{rowodd}{roweven}
+\begin{tabularx}{\textwidth}{>{\ttfamily\small}l X}
+\rowcolor{tableheadbg}
+\color{white}\normalfont Key & \color{white}Value / Notes \\
+\toprule
+name / slug        & pulseboard\_mobile \\
+scheme             & com.anonymous.pulseboard-mobile \\
+version            & 1.0.0 \\
+orientation        & portrait \\
+newArchEnabled     & false (React Native New Arch disabled) \\
+plugins            & expo-router, expo-asset, expo-notifications, datetimepicker \\
+ios bundleId       & com.anonymous.pulseboard-mobile \\
+android package    & com.anonymous.pulseboard\_mobile \\
+android extra      & useNextNotificationsApi: true \\
+\bottomrule
+\end{tabularx}
+\caption{pulseboard\_mobile/app.json — Key Configuration Fields}
+\end{table}
 
 \section{Running the Project}
 
-\begin{lstlisting}[language=bash, caption={Development Setup Commands}]
-# ── Backend ──────────────────────────────────────────────────
-cd pulseboard_backend
-npm install
-cp .env.example .env      # Fill in all environment variables
-npm run dev               # ts-node src/server.ts (port 8082)
-
-# ── Mobile ───────────────────────────────────────────────────
-cd pulseboard_mobile
-npm install
-# Update .env with your local machine IP:
-echo "EXPO_PUBLIC_API_URL=http://$(ipconfig getifaddr en0):8082" > .env
-npx expo start            # Scan QR with Expo Go app
-npx expo start --clear    # Clear Metro bundler cache (recommended after pulls)
-\end{lstlisting}
+\begin{table}[H]
+\centering
+\rowcolors{2}{rowodd}{roweven}
+\begin{tabularx}{\textwidth}{l l X}
+\rowcolor{tableheadbg}
+\color{white}Step & \color{white}Location & \color{white}Command / Action \\
+\toprule
+1 & backend  & \texttt{cd pulseboard\_backend \&\& npm install} \\
+2 & backend  & Copy \texttt{.env.example} → \texttt{.env}, fill all variables \\
+3 & backend  & \texttt{npm run dev} — starts on port 8082 \\
+4 & mobile   & \texttt{cd pulseboard\_mobile \&\& npm install} \\
+5 & mobile   & Set \texttt{EXPO\_PUBLIC\_API\_URL} to local machine IP \\
+6 & mobile   & \texttt{npx expo start} — scan QR with Expo Go \\
+7 & mobile   & \texttt{npx expo start --clear} — use after git pulls \\
+\bottomrule
+\end{tabularx}
+\caption{Development Setup Steps}
+\end{table}
 
 % ─────────────────────────────────────────────────────────────
 \chapter{Known Issues \& Future Work}
@@ -1544,7 +1483,6 @@ Token Revocation   & User revokes Google access — watcher silently fails & Det
 AI Hallucinations  & Llama may extract wrong dates or miscategorize emails & Post-processing validation + user ``mark as not event'' feedback \\
 Gmail Quota        & 1000+ users × 50 emails × every 5min = possible quota exhaustion & Per-user rate limiting + exponential backoff \\
 Cold Start Delay   & New users wait up to 5 min for first inbox scan & Trigger \texttt{checkUserEmails()} immediately after Google OAuth \\
-No User Control    & Users can't delete individual events or mute categories & Per-category settings toggle + individual event deletion \\
 IITJ Email Lock    & Registration restricted to \texttt{@iitj.ac.in} — may need updating & Configurable email domain allowlist \\
 \bottomrule
 \end{tabularx}
